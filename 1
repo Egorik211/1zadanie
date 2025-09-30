@@ -1,0 +1,57 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int N = 0;
+
+        // Ввод размера массива (чётное число)
+        while (true) {
+            System.out.print("Введите размер массива (чётное число): ");
+            try {
+                N = Integer.parseInt(scanner.nextLine().trim());
+                if (N > 0 && N % 2 == 0) break;
+                System.out.println("Нужно ввести положительное чётное число.");
+            } catch (Exception e) {
+                System.out.println("Ошибка. Введите целое число.");
+            }
+
+        }
+        int[] arr = new int[N];
+
+        // Ввод всей строки сразу и преобразование в int
+        while (true) {
+            System.out.println("Введите " + N + " целых чисел через пробел:");
+            String[] parts = scanner.nextLine().trim().split("\\s+");
+            if (parts.length != N) {
+                System.out.println("Ошибка: необходимо ввести ровно " + N + " чисел.");
+                continue;
+            }
+            boolean allOk = true;
+            for (int i = 0; i < N; i++) {
+                try {
+                    arr[i] = Integer.parseInt(parts[i]);
+                } catch (Exception e) {
+                    System.out.println("Ошибка: элемент #" + (i+1) + " не является числом.");
+                    allOk = false;
+                    break;
+                }
+            }
+            if (allOk) break;
+        }
+
+        // Возводим в квадрат локальные минимумы
+        for (int i = 1; i < N - 1; i++) {
+            if (arr[i] < arr[i-1] && arr[i] < arr[i+1]) {
+                arr[i] *= arr[i];
+            }
+        }
+
+        // Вывод результата
+        for (int i = 0; i < N; i++) {
+            System.out.print(arr[i] + (i < N-1 ? " " : "\n"));
+        }
+        scanner.close();
+
+    }
+}
