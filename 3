@@ -1,0 +1,103 @@
+import java.util.Scanner;
+
+class Work {
+    private double salary;
+    private double k;
+
+    public void init(double salary, double k) {
+        this.salary = salary;
+        this.k = k;
+    }
+
+    public void read(Scanner scanner) {
+        System.out.print("Введите зарплату: ");
+        salary = scanner.nextDouble();
+        System.out.print("Введите коэффициент доплаты k: ");
+        k = scanner.nextDouble();
+    }
+
+    public void display() {
+        System.out.printf("Зарплата: %.2f, коэффициент k: %.2f\n", salary, k);
+    }
+
+    public double payment() {
+        return salary * k;
+    }
+}
+
+// Основной класс Работодатель
+public class Employer {
+    private String name;
+    private Work work1;
+    private Work work2;
+    private Work work3;
+    private int places1;
+    private int places2;
+    private int places3;
+
+    public void read() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите название работодателя: ");
+        name = scanner.nextLine();
+
+        work1 = new Work();
+        System.out.println("Работа 1:");
+        work1.read(scanner);
+        System.out.print("Занятых мест для работы 1: ");
+        places1 = scanner.nextInt();
+        scanner.nextLine();
+
+        work2 = new Work();
+        System.out.println("Работа 2:");
+        work2.read(scanner);
+        System.out.print("Занятых мест для работы 2: ");
+        places2 = scanner.nextInt();
+        scanner.nextLine();
+
+        work3 = new Work();
+        System.out.println("Работа 3:");
+        work3.read(scanner);
+        System.out.print("Занятых мест для работы 3: ");
+        places3 = scanner.nextInt();
+        scanner.nextLine();
+    }
+
+    public void display() {
+        System.out.println("Работодатель: " + name);
+        System.out.print("Работа 1: ");
+        work1.display();
+        System.out.println("Занятых мест: " + places1);
+
+        System.out.print("Работа 2: ");
+        work2.display();
+        System.out.println("Занятых мест: " + places2);
+
+        System.out.print("Работа 3: ");
+        work3.display();
+        System.out.println("Занятых мест: " + places3);
+    }
+
+    public double calculateAllPayments() {
+        return work1.payment() * places1
+                + work2.payment() * places2
+                + work3.payment() * places3;
+    }
+
+    public int mostExpensiveWorkIndex() {
+        double p1 = work1.payment() * places1;
+        double p2 = work2.payment() * places2;
+        double p3 = work3.payment() * places3;
+        if (p1 >= p2 && p1 >= p3) return 1;
+        if (p2 >= p1 && p2 >= p3) return 2;
+        return 3;
+    }
+
+    public static void main(String[] args) {
+        Employer emp = new Employer();
+        emp.read();
+        emp.display();
+
+        System.out.printf("Общая сумма выплат: %.2f\n", emp.calculateAllPayments());
+        System.out.println("Наиболее затратная работа: №" + emp.mostExpensiveWorkIndex());
+    }
+}
