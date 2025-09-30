@@ -1,0 +1,74 @@
+import java.util.Scanner;
+
+public class PointPolar {
+    private double r;   // радиус
+    private double fi;  // угол в радианах, 0 <= fi < 2*PI
+
+    // Конструктор
+    public PointPolar(double r, double fi) {
+        this.r = r;
+        setFi(fi);
+    }
+
+    // Нормализация угла
+    public void setFi(double fi) {
+        double twoPi = 2 * Math.PI;
+        this.fi = fi % twoPi;
+        if (this.fi < 0) this.fi += twoPi;
+    }
+
+    // Ввод значения
+    public void read(Scanner scanner) {
+        System.out.print("Введите r (>=0): ");
+        this.r = scanner.nextDouble();
+        System.out.print("Введите fi (угол в радианах): ");
+        setFi(scanner.nextDouble());
+    }
+
+    // Вывод
+    public String toString() {
+        return String.format("Точка: r=%.3f, fi=%.3f (рад)", r, fi);
+    }
+
+    // Расстояние до оси OX
+    public double distanceToOx() {
+        return r * Math.abs(Math.sin(fi));
+    }
+
+    // Сложение двух точек
+    public static PointPolar add(PointPolar p1, PointPolar p2) {
+        double x1 = p1.r * Math.cos(p1.fi);
+        double y1 = p1.r * Math.sin(p1.fi);
+        double x2 = p2.r * Math.cos(p2.fi);
+        double y2 = p2.r * Math.sin(p2.fi);
+
+        double xSum = x1 + x2;
+        double ySum = y1 + y2;
+
+        double rSum = Math.sqrt(xSum*xSum + ySum*ySum);
+        double fiSum = Math.atan2(ySum, xSum);
+
+        return new PointPolar(rSum, fiSum);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        PointPolar p1 = new PointPolar(5, Math.PI / 4);
+        PointPolar p2 = new PointPolar(3, Math.PI / 2);
+
+        System.out.println(p1);
+        System.out.println(p2);
+
+        System.out.printf("Расстояние p1 до оси OX: %.3f\n", p1.distanceToOx());
+
+        PointPolar p3 = PointPolar.add(p1, p2);
+        System.out.println("Результат сложения точек: " + p3);
+
+        PointPolar p4 = new PointPolar(0, 0);
+        p4.read(scanner);
+        System.out.println(p4);
+
+        scanner.close();
+    }
+}
