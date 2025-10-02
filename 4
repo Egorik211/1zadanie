@@ -1,0 +1,109 @@
+import java.util.Scanner;
+
+public class PointPolar {
+    private double r;
+    private double fi;
+
+    public PointPolar(double r, double fi) {
+        this.r = r;
+        setFi(fi);
+    }
+
+    public void setFi(double fi) {
+        double twoPi = 2 * Math.PI;
+        this.fi = fi % twoPi;
+        if (this.fi < 0) this.fi += twoPi;
+    }
+
+    public void read(Scanner scanner) {
+        System.out.print("Введите r (>=0): ");
+        this.r = scanner.nextDouble();
+        System.out.print("Введите fi (угол в радианах): ");
+        setFi(scanner.nextDouble());
+    }
+    
+    public String toString() {
+        return String.format("Точка: r=%.3f, fi=%.3f (рад)", r, fi);
+    }
+
+    public double distanceToOx() {
+        return r * Math.abs(Math.sin(fi));
+    }
+
+    public static PointPolar add(PointPolar p1, PointPolar p2) {
+        double x1 = p1.r * Math.cos(p1.fi);
+        double y1 = p1.r * Math.sin(p1.fi);
+        double x2 = p2.r * Math.cos(p2.fi);
+        double y2 = p2.r * Math.sin(p2.fi);
+
+        double xSum = x1 + x2;
+        double ySum = y1 + y2;
+
+        double rSum = Math.sqrt(xSum*xSum + ySum*ySum);
+        double fiSum = Math.atan2(ySum, xSum);
+
+        return new PointPolar(rSum, fiSum);
+    }
+}
+
+// Аналогичный record для PointPolar
+record PointPolarRecord(double r, double fi) {
+    public PointPolarRecord {
+        double twoPi = 2 * Math.PI;
+        fi = fi % twoPi;
+        if (fi < 0) fi += twoPi;
+    }
+
+    // Добавим метод для вычисления расстояния
+    public double distanceToOx() {
+        return r * Math.abs(Math.sin(fi));
+    }
+
+    // Статический метод добавления двух точек (возвращает новый record)
+    public static PointPolarRecord add(PointPolarRecord p1, PointPolarRecord p2) {
+        double x1 = p1.r * Math.cos(p1.fi);
+        double y1 = p1.r * Math.sin(p1.fi);
+        double x2 = p2.r * Math.cos(p2.fi);
+        double y2 = p2.r * Math.sin(p2.fi);
+
+        double xSum = x1 + x2;
+        double ySum = y1 + y2;
+
+        double rSum = Math.sqrt(xSum*xSum + ySum*ySum);
+        double fiSum = Math.atan2(ySum, xSum);
+
+        return new PointPolarRecord(rSum, fiSum);
+    }
+}
+import java.util.Scanner;
+
+public class MainCompare {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Класс - ссылочный тип и изменяемый
+        PointPolar p1 = new PointPolar(5, Math.PI / 4);
+        PointPolar p2 = p1;  // присваивание копирует ссылку
+        p2.setFi(Math.PI / 2);   // изменение через p2
+
+        System.out.println("Класс:");
+        System.out.println("p1 = " + p1);  // fi у p1 изменился!
+        System.out.println("p2 = " + p2);
+
+        // Record - ссылочный тип, но неизменяемый
+        PointPolarRecord r1 = new PointPolarRecord(5, Math.PI / 4);
+        PointPolarRecord r2 = r1; // копируется ссылка
+
+        System.out.println("\nRecord:");
+        System.out.println("r1 = " + r1);
+        System.out.println("r2 = " + r2);
+
+        // Попытка изменить r2 невозможна, только создание нового объекта
+        PointPolarRecord r3 = new PointPolarRecord(3, Math.PI / 2);
+
+        PointPolarRecord r4 = PointPolarRecord.add(r1, r3);
+        System.out.println("Результат сложения record r4 = " + r4);
+
+        scanner.close();
+    }
+}
